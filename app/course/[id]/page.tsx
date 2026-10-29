@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, GraduationCap, Info } from 'lucide-react'
 import Link from 'next/link'
@@ -13,6 +14,8 @@ import { ProgressProvider, useProgress } from '@/lib/progress-context'
 
 function CourseContent() {
   const { course, getOverallProgress } = useProgress()
+  const searchParams = useSearchParams()
+  const requestedChapterId = searchParams.get('chapter')
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null)
   const [activePartId, setActivePartId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -22,7 +25,10 @@ function CourseContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (course.chapters.length > 0) {
-        const firstUnlockedChapter = course.chapters.find(ch => !ch.isLocked)
+        const requestedChapter = requestedChapterId ? course.chapters.find(ch => ch.id === requestedChapterId) : null
+        const firstUnlockedChapter = requestedChapter && !requestedChapter.isLocked
+          ? requestedChapter
+          : course.chapters.find(ch => !ch.isLocked)
         if (firstUnlockedChapter) {
           setActiveChapterId(firstUnlockedChapter.id)
           if (firstUnlockedChapter.parts.length > 0) {
@@ -33,7 +39,7 @@ function CourseContent() {
       setIsLoading(false)
     }, 500)
     return () => clearTimeout(timer)
-  }, [course.chapters])
+  }, [course.chapters, requestedChapterId])
 
   const activeChapter = course.chapters.find(ch => ch.id === activeChapterId)
   const activePart = activeChapter?.parts.find(p => p.id === activePartId)
@@ -220,8 +226,10 @@ function CourseContent() {
 
 export default function CourseDetailPage() {
   return (
-    <ProgressProvider>
-      <CourseContent />
-    </ProgressProvider>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ProgressProvider>
+        <CourseContent />
+      </ProgressProvider>
+    </Suspense>
   )
 }
