@@ -10,9 +10,6 @@ import {
   Rocket, 
   ChevronRight,
   CheckCircle2,
-  Users,
-  Clock,
-  Star
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -57,10 +54,8 @@ const chapters = [
 ]
 
 const features = [
-  { icon: Users, value: '10,000+', label: 'Students Enrolled' },
-  { icon: BookOpen, value: '25', label: 'In-depth Parts' },
-  { icon: Clock, value: '40+', label: 'Hours of Content' },
-  { icon: Star, value: '4.9', label: 'Average Rating' }
+  { icon: BookOpen, value: '5', label: 'Chapters' },
+  { icon: CheckCircle2, value: '25', label: 'Lessons' }
 ]
 
 export default function HomePage() {
@@ -122,7 +117,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="border-b">
+      <section id="overview" className="border-b">
         <div className="mx-auto max-w-7xl px-4 py-12">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {features.map((feature, i) => (
@@ -143,7 +138,7 @@ export default function HomePage() {
       </section>
 
       {/* Course Content */}
-      <section className="py-20">
+      <section id="courses" className="py-20">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
@@ -194,7 +189,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <Link href="/course/cit-101" className="shrink-0">
+                  <Link href={`/course/cit-101?chapter=ch-${chapter.number}`} className="shrink-0">
                     <Button variant="outline" className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground">
                       Start Chapter
                       <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
